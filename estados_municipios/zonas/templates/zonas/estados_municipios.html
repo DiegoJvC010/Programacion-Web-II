@@ -34,7 +34,7 @@
             // Cargar municipios al seleccionar un estado
             $('#estado').change(function() {
                 const estadoSeleccionado = $(this).val();
-                $('#municipio').empty().append(new Option("Seleccione un municipio", ""));
+                $('#municipio').empty();
 
                 if (estadoSeleccionado) {
                     $.ajax({
