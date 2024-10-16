@@ -5,7 +5,7 @@ import os
 
 # Cargar los datos del archivo JSON
 def cargar_datos():
-    ruta_archivo = os.path.join(os.path.dirname(__file__), 'estados-municipios.json')
+    ruta_archivo = os.path.join(os.path.dirname(__file__),'data', 'estados-municipios.json')
     with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
         return json.load(archivo)
 

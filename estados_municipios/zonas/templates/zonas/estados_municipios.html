@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estados y Municipios</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Seleccione un Estado y Municipio</h1>
+    <label for="estado">Estado:</label>
+    <select id="estado">
+    </select>
+
+    <label for="municipio">Municipio:</label>
+    <select id="municipio">
+    </select>
+
+    <script>
+        $(document).ready(function() {
+            // Cargar estados al cargar la página
+            $.ajax({
+                url: "/zonas/obtener_estados/",
+                method: "GET",
+                success: function(response) {
+                    const estados = response.estados;
+                    $.each(estados, function(index, estado) {
+                        $('#estado').append(new Option(estado, estado));
+                    });
+                    $('#estado').val(estados[0]).change();
+                }
+            });
+
+            // Cargar municipios al seleccionar un estado
+            $('#estado').change(function() {
+                const estadoSeleccionado = $(this).val();
+                $('#municipio').empty().append(new Option("Seleccione un municipio", ""));
+
+                if (estadoSeleccionado) {
+                    $.ajax({
+                        url: "/zonas/obtener_municipios/",
+                        method: "GET",
+                        data: { estado: estadoSeleccionado },
+                        success: function(response) {
+                            const municipios = response.municipios;
+                            $.each(municipios, function(index, municipio) {
+                                $('#municipio').append(new Option(municipio, municipio));
+                            });
+                            $('#municipio').val(municipios[0]);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
