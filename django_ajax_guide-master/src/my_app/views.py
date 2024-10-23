@@ -13,39 +13,42 @@ def indexView(request):
 
 
 def postFriend(request):
-    # request should be ajax and method should be POST.
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest'and request.method == "POST":
-        # get the form data
+    # Check if the request is AJAX and uses the POST method
+    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Get the data from the form submitted by the client
         form = FriendForm(request.POST)
-        # save the data and after fetch the object in instance
+        
+        # Check if the form data is valid
         if form.is_valid():
+            # Save the valid form data to the database
             instance = form.save()
-            # serialize in new friend object in json
-            ser_instance = serializers.serialize('json', [ instance, ])
-            # send to client side.
+            # Serialize the saved instance into JSON format to send back to the client
+            ser_instance = serializers.serialize('json', [instance])
+            # Send a JSON response to the client with the serialized instance
             return JsonResponse({"instance": ser_instance}, status=200)
         else:
-            # some form errors occured.
+            # If the form contains errors, send them back as a JSON response with a 400 status code
             return JsonResponse({"error": form.errors}, status=400)
 
-    # some error occured
-    return JsonResponse({"error": ""}, status=400)
+    # If the request is not valid (e.g., not an AJAX request or not POST), return a generic error response
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
 
 # BONUS CBV
 def checkNickName(request):
     # request should be ajax and method should be GET.
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "GET":
+    if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # get the nick name from the client side.
         nick_name = request.GET.get("nick_name", None)
         # check for the nick name in the database.
-        if Friend.objects.filter(nick_name = nick_name).exists():
+        if Friend.objects.filter(nick_name=nick_name).exists():
             # if nick_name found return not valid new friend
-            return JsonResponse({"valid":False}, status = 200)
+            return JsonResponse({"valid": False}, status=200)
         else:
             # if nick_name not found, then user can create a new friend.
-            return JsonResponse({"valid":True}, status = 200)
+            return JsonResponse({"valid": True}, status=200)
 
-    return JsonResponse({}, status = 400)
+    return JsonResponse({"error": "Invalid request"}, status=400)
     
 
 

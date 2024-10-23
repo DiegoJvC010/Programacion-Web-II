@@ -56,17 +56,18 @@
         e.preventDefault();
         
         const formData = new FormData(this);
-
+    
         try {
             const response = await fetch("{% url 'post_friend' %}", {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             });
             const data = await response.json();
-
+    
             if (data.instance) {
                 // Limpiar el formulario y agregar el nuevo amigo a la tabla
                 this.reset();
@@ -100,7 +101,11 @@
         }
 
         try {
-            const response = await fetch("{% url 'validate_nickname' %}?nick_name=" + encodeURIComponent(nick_name));
+            const response = await fetch("{% url 'validate_nickname' %}?nick_name=" + encodeURIComponent(nick_name), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const data = await response.json();
 
             if (!data.valid) {
