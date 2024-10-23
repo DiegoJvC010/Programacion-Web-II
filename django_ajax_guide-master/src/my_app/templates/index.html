@@ -90,7 +90,7 @@
         }
     });
 
-    document.querySelector("#id_nick_name").addEventListener("focusout", function (e) {
+    document.querySelector("#id_nick_name").addEventListener("focusout", async function (e) {
         e.preventDefault();
         
         const nick_name = this.value;
@@ -99,16 +99,18 @@
             return;
         }
 
-        fetch("{% url 'validate_nickname' %}?nick_name=" + encodeURIComponent(nick_name))
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const response = await fetch("{% url 'validate_nickname' %}?nick_name=" + encodeURIComponent(nick_name));
+            const data = await response.json();
+
             if (!data.valid) {
                 alert("You cannot create a friend with the same nickname");
                 this.value = "";
                 this.focus();
             }
-        })
-        .catch(error => console.log('Error:', error));
+        } catch (error) {
+            console.log('Error:', error);
+        }
     });
 </script>
 {% endblock javascript %}
